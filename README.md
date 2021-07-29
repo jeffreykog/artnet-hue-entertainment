@@ -2,6 +2,8 @@
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.txt)
 
+__Note: This package is still work in progress!__
+
 In short: an ArtNet controller for the new Hue Entertainment API,
 giving near-realtime control of Hue lights.
 
@@ -41,3 +43,7 @@ To start using ArtNet-Hue-Entertainment, take the following steps:
    and select some lights.
    Placement of the bulbs is not important and will be ignored.
 3. This project really is still work in progress. More to come!
+
+## Protocol documentation
+* Hue Entertainment: https://developers.meethue.com/develop/hue-entertainment/philips-hue-entertainment-api/
+* ArtNet: https://artisticlicence.com/WebSiteMaster/User%20Guides/art-net.pdf
