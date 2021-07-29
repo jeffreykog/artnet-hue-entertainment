@@ -6,7 +6,7 @@ The well-known Philips/Signify Hue API only allows for about 10 updates per seco
 If you want to update multiple lights multiple times per second this approach will not scale.
 To make this practical, all color transitions will need to be done inside the Hue bulb.
 This complicates light programming, as Hue bulbs can not be used as any other RGB DMX light.
-As this is the only well-known Hue API, this is what most other Hue ArtNet bridges use. 
+As this is the only well-known Hue API, this is what most other Hue ArtNet bridges use.
 
 Since the introduction of the Hue Sync Box, a new API is available allowing up to
 25 updates per second for up to 10 lights. This gives us almost real-time control over

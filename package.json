@@ -2,6 +2,10 @@
   "name": "artnet-hue",
   "version": "0.1.0",
   "description": "Near-realtime ArtNet control over Signify/Philips Hue lights using the new Hue Entertainment API",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jeffreykog/artnet-hue-entertainment.git"
+  },
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,7 +14,19 @@
     "name": "Jeffrey Kog",
     "url": "https://github.com/jeffreykog"
   },
-  "license": "ISC",
+  "license": "MIT",
+  "homepage": "https://github.com/jeffreykog/artnet-hue-entertainment",
+  "bugs": {
+    "url": "https://github.com/jeffreykog/artnet-hue-entertainment/issues"
+  },
+  "keywords": [
+    "artnet",
+    "dmx",
+    "philips",
+    "hue",
+    "entertainment",
+    "light"
+  ],
   "dependencies": {
     "ip6addr": "^0.2.3",
     "node-dtls-client": "^1.0.1",
