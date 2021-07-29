@@ -1,5 +1,5 @@
 {
-  "name": "artnet-hue",
+  "name": "artnet-hue-entertainment",
   "version": "0.1.0",
   "description": "Near-realtime ArtNet control over Signify/Philips Hue lights using the new Hue Entertainment API",
   "repository": {
