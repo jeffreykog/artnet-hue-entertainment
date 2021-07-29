@@ -83,9 +83,9 @@ export class HueDtlsController extends EventEmitter {
 
         let offset = 16;
         updates.forEach(update => {
-            const r = ((update.color[1] * 256) + update.color[0]) * (update.color[0] / 255);
-            const g = ((update.color[2] * 256) + update.color[1]) * (update.color[0] / 255);
-            const b = ((update.color[3] * 256) + update.color[2]) * (update.color[0] / 255);
+            const r = (update.color[1] * 257) * (update.color[0] / 255);
+            const g = (update.color[2] * 257) * (update.color[0] / 255);
+            const b = (update.color[3] * 257) * (update.color[0] / 255);
 
             message.writeUInt8(0, offset);  // Device type: Light
             message.writeUInt16BE(update.lightId, offset + 1);  // Light ID

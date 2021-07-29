@@ -11,6 +11,7 @@ class ArtNetHueEntertainmentCliHandler {
 
     constructor(args: string[]) {
         this.config = new Conf();
+        console.log(this.config.path);
         this.args = args;
     }
 
