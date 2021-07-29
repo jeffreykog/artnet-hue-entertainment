@@ -2,6 +2,9 @@
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.txt)
 
+In short: an ArtNet controller for the new Hue Entertainment API,
+giving near-realtime control of Hue lights.
+
 The well-known Philips/Signify Hue API only allows for about 10 updates per second.
 If you want to update multiple lights multiple times per second this approach will not scale.
 To make this practical, all color transitions will need to be done inside the Hue bulb.

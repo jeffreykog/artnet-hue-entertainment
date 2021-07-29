@@ -19,6 +19,9 @@
   "bugs": {
     "url": "https://github.com/jeffreykog/artnet-hue-entertainment/issues"
   },
+  "bin": {
+    "artnet-hue-entertainment": "./build/cli.js"
+  },
   "keywords": [
     "artnet",
     "dmx",
@@ -28,12 +31,16 @@
     "light"
   ],
   "dependencies": {
+    "conf": "^10.0.1",
     "ip6addr": "^0.2.3",
+    "minimist": "^1.2.5",
     "node-dtls-client": "^1.0.1",
     "node-hue-api": "^5.0.0-beta.2"
   },
   "devDependencies": {
+    "@types/conf": "^3.0.0",
     "@types/ip6addr": "^0.2.3",
+    "@types/minimist": "^1.2.2",
     "@types/node": "^15.6.1",
     "@types/node-hue-api": "^2.3.1",
     "typescript": "^4.3.2"
