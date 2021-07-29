@@ -1,0 +1,25 @@
+{
+  "name": "artnet-hue",
+  "version": "0.1.0",
+  "description": "Near-realtime ArtNet control over Signify/Philips Hue lights using the new Hue Entertainment API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": {
+    "name": "Jeffrey Kog",
+    "url": "https://github.com/jeffreykog"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "ip6addr": "^0.2.3",
+    "node-dtls-client": "^1.0.1",
+    "node-hue-api": "^5.0.0-beta.2"
+  },
+  "devDependencies": {
+    "@types/ip6addr": "^0.2.3",
+    "@types/node": "^15.6.1",
+    "@types/node-hue-api": "^2.3.1",
+    "typescript": "^4.3.2"
+  }
+}
