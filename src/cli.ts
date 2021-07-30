@@ -2,7 +2,7 @@
 import Conf from 'conf/dist/source';
 import * as minimist from 'minimist';
 import { v3 } from 'node-hue-api';
-import { start } from './artnet';
+import { ArtNetHueBridge } from './bridge';
 
 class ArtNetHueEntertainmentCliHandler {
 
@@ -75,7 +75,21 @@ class ArtNetHueEntertainmentCliHandler {
         const username = this.config.get('hue.username') as string;
         const clientKey = this.config.get('hue.clientKey') as string;
 
-        await start(host, username, clientKey);
+        const bridge = new ArtNetHueBridge({
+            hueHost: host,
+            hueUsername: username,
+            hueClientKey: clientKey,
+            entertainmentRoomId: 6,
+            artNetBindIp: '127.0.0.1',
+            lights: [
+                {
+                    dmxStart: 1,
+                    lightId: '10',
+                    channelMode: '8bit-dimmable',
+                },
+            ]
+        });
+        await bridge.start();
     }
 }
 

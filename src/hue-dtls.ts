@@ -6,7 +6,7 @@ const PACKET_HEADER = Buffer.from([0x48, 0x75, 0x65, 0x53, 0x74, 0x72, 0x65, 0x6
 
 export interface ColorUpdate {
     lightId: number;
-    color: number[];
+    color: [number, number, number];
 }
 
 
@@ -73,7 +73,6 @@ export class HueDtlsController extends EventEmitter {
 
         const message = Buffer.alloc(16 + (updates.length * 9), 0x00);
         PACKET_HEADER.copy(message, 0);
-        // message.write('HueStream', 'ascii');
         message.writeUInt8(1, 9);  // Major version
         message.writeUInt8(0, 10);  // Minor version
         message.writeUInt8(0, 11);  // Sequence. This is currently ignored
@@ -83,21 +82,11 @@ export class HueDtlsController extends EventEmitter {
 
         let offset = 16;
         updates.forEach(update => {
-            const r = (update.color[1] * 257) * (update.color[0] / 255);
-            const g = (update.color[2] * 257) * (update.color[0] / 255);
-            const b = (update.color[3] * 257) * (update.color[0] / 255);
-
             message.writeUInt8(0, offset);  // Device type: Light
             message.writeUInt16BE(update.lightId, offset + 1);  // Light ID
-            // message.writeUInt8(update.color[0], offset + 3);  // R
-            // message.writeUInt8(update.color[1], offset + 4);  // R
-            // message.writeUInt8(update.color[2], offset + 5);  // R
-            // message.writeUInt8(update.color[3], offset + 6);  // R
-            // message.writeUInt8(update.color[4], offset + 7);  // R
-            // message.writeUInt8(update.color[5], offset + 8);  // R
-            message.writeUInt16BE(r, offset + 3);  // R
-            message.writeUInt16BE(g, offset + 5);  // G
-            message.writeUInt16BE(b, offset + 7);  // B
+            message.writeUInt16BE(update.color[0], offset + 3);  // R
+            message.writeUInt16BE(update.color[1], offset + 5);  // G
+            message.writeUInt16BE(update.color[2], offset + 7);  // B
             offset += 9;
         });
 
