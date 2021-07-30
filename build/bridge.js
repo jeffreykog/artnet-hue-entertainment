@@ -99,9 +99,8 @@ class ArtNetHueBridge {
             // TODO: Detect (and warn) overlapping DMX channels
             this.lights = lights;
             this.dtlsController = new hue_dtls_1.HueDtlsController(this.configuration.hueHost, this.configuration.hueUsername, this.configuration.hueClientKey);
-            this.dtlsController.on('close', () => {
-                process.exit(0);
-            });
+            this.dtlsController.on('close', () => { });
+            this.dtlsController.on('connected', this.onDtlsConnected.bind(this));
             this.artNetController = new controller_1.ArtNetController();
             this.artNetController.bind(this.configuration.artNetBindIp);
             this.artNetController.on('dmx', this.onDmxData.bind(this));
@@ -115,13 +114,14 @@ class ArtNetHueBridge {
             console.log('Performing streaming mode handshake...');
             yield this.dtlsController.connect();
             console.log('Connected and ready to go!');
-            // process.on('SIGINT', () => {
-            //     console.log('  Closing Hue Entertainment connection...');
-            //     this.dtlsController.close().then(() => {
-            //         console.log('Done');
-            //         process.exit(0);
-            //     });
-            // });
+            process.on('SIGINT', () => {
+                this.close();
+            });
+        });
+    }
+    close() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield Promise.all([this.dtlsController.close(), this.artNetController.close()]);
         });
     }
     onDmxData(dmx) {
@@ -131,6 +131,14 @@ class ArtNetHueBridge {
             const dmxData = dmx.data.slice(light.dmxStart - 1, (light.dmxStart - 1) + light.channelWidth);
             const colors = light.getColorValue(dmxData);
             colorUpdates.push({ lightId: light.lightId, color: colors });
+        });
+        (_a = this.dtlsController) === null || _a === void 0 ? void 0 : _a.sendUpdate(colorUpdates);
+    }
+    onDtlsConnected() {
+        var _a;
+        const colorUpdates = [];
+        this.lights.forEach(light => {
+            colorUpdates.push({ lightId: light.lightId, color: [0, 0, 0] });
         });
         (_a = this.dtlsController) === null || _a === void 0 ? void 0 : _a.sendUpdate(colorUpdates);
     }

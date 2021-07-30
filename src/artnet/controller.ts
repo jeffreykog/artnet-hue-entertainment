@@ -79,6 +79,13 @@ export class ArtNetController extends EventEmitter {
         }
     }
 
+    public async close() {
+        await Promise.all([
+            new Promise((resolve) => this.socketBroadcast?.close(() => resolve(undefined))),
+            new Promise((resolve) => this.socketUnicast?.close(() => resolve(undefined))),
+        ]);
+    }
+
     private onSocketError(err: Error) {
 
     }

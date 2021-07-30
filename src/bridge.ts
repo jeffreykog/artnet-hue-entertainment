@@ -140,9 +140,8 @@ export class ArtNetHueBridge {
             this.configuration.hueUsername,
             this.configuration.hueClientKey,
         );
-        this.dtlsController.on('close', () => {
-            process.exit(0);
-        });
+        this.dtlsController.on('close', () => {});
+        this.dtlsController.on('connected', this.onDtlsConnected.bind(this));
 
         this.artNetController = new ArtNetController();
         this.artNetController.bind(this.configuration.artNetBindIp);
@@ -162,13 +161,13 @@ export class ArtNetHueBridge {
         await this.dtlsController.connect();
         console.log('Connected and ready to go!');
 
-        // process.on('SIGINT', () => {
-        //     console.log('  Closing Hue Entertainment connection...');
-        //     this.dtlsController.close().then(() => {
-        //         console.log('Done');
-        //         process.exit(0);
-        //     });
-        // });
+        process.on('SIGINT', () => {
+            this.close();
+        });
+    }
+
+    public async close() {
+        await Promise.all([this.dtlsController!.close(), this.artNetController!.close()]);
     }
 
     private onDmxData(dmx: ArtDmx) {
@@ -177,6 +176,15 @@ export class ArtNetHueBridge {
             const dmxData = dmx.data.slice(light.dmxStart - 1, (light.dmxStart - 1) + light.channelWidth);
             const colors = light.getColorValue(dmxData);
             colorUpdates.push({lightId: light.lightId, color: colors});
+        });
+
+        this.dtlsController?.sendUpdate(colorUpdates);
+    }
+
+    private onDtlsConnected() {
+        const colorUpdates: ColorUpdate[] = [];
+        this.lights!.forEach(light => {
+            colorUpdates.push({lightId: light.lightId, color: [0, 0, 0]});
         });
 
         this.dtlsController?.sendUpdate(colorUpdates);

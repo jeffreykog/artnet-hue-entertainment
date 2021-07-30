@@ -20,6 +20,9 @@ class HueDtlsController extends events_1.EventEmitter {
         this.socket = null;
         this.opened = false;
         this.skip = false;
+        this.lastUpdate = null;
+        this.lastUpdateTimestamp = null;
+        this.updateKeepaliveTimeout = null;
         this.host = host;
         this.username = username;
         this.clientKey = clientKey;
@@ -39,10 +42,12 @@ class HueDtlsController extends events_1.EventEmitter {
             const socket = yield node_dtls_client_1.dtls.createSocket(dtlsConfig);
             socket.on('connected', () => {
                 this.opened = true;
+                this.emit('connected');
             });
             socket.on('close', () => {
                 this.close();
             });
+            this.updateKeepaliveTimeout = setInterval(this.updateKeepalive.bind(this), 1000);
             this.socket = socket;
         });
     }
@@ -62,8 +67,22 @@ class HueDtlsController extends events_1.EventEmitter {
             return;
         }
         this.skip = true;
+        this.lastUpdate = updates;
+        this.lastUpdateTimestamp = new Date();
         // TODO: Perhaps validate the input?
         // TODO: Ensure there is 40ms between every call.
+        this.sendUpdatePacket(updates);
+    }
+    updateKeepalive() {
+        if (this.lastUpdateTimestamp !== null && Date.now() - this.lastUpdateTimestamp.getTime() <= 2000) {
+            return;
+        }
+        if (this.lastUpdate) {
+            this.sendUpdatePacket(this.lastUpdate);
+        }
+    }
+    sendUpdatePacket(updates) {
+        var _a;
         const message = Buffer.alloc(16 + (updates.length * 9), 0x00);
         PACKET_HEADER.copy(message, 0);
         message.writeUInt8(1, 9); // Major version
@@ -82,7 +101,7 @@ class HueDtlsController extends events_1.EventEmitter {
             offset += 9;
         });
         // console.log(message.toString('hex').match(/../g)!.join(' '));
-        this.socket.send(message);
+        (_a = this.socket) === null || _a === void 0 ? void 0 : _a.send(message);
     }
 }
 exports.HueDtlsController = HueDtlsController;
