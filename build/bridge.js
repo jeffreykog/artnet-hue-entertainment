@@ -13,7 +13,7 @@ exports.ArtNetHueBridge = void 0;
 const node_hue_api_1 = require("node-hue-api");
 const const_1 = require("./const");
 const hue_dtls_1 = require("./hue-dtls");
-const controller_1 = require("./artnet/controller");
+const dist_1 = require("artnet-protocol/dist");
 class DmxLight {
     constructor(dmxStart, lightId) {
         this.dmxStart = dmxStart;
@@ -94,14 +94,14 @@ class ArtNetHueBridge {
                 lights.push(new LIGHT_MODES[light.channelMode](light.dmxStart, parseInt(light.lightId, 10)));
             });
             if (roomLightIds.length !== 0) {
-                throw new Error(`Not all lights in the Entertainment room have been configured`);
+                throw new Error(`Not all lights in the Entertainment room have been configured: ${roomLightIds}`);
             }
             // TODO: Detect (and warn) overlapping DMX channels
             this.lights = lights;
             this.dtlsController = new hue_dtls_1.HueDtlsController(this.configuration.hueHost, this.configuration.hueUsername, this.configuration.hueClientKey);
             this.dtlsController.on('close', () => { });
             this.dtlsController.on('connected', this.onDtlsConnected.bind(this));
-            this.artNetController = new controller_1.ArtNetController();
+            this.artNetController = new dist_1.ArtNetController();
             this.artNetController.bind(this.configuration.artNetBindIp);
             this.artNetController.on('dmx', this.onDmxData.bind(this));
             console.log('Requesting streaming mode...');

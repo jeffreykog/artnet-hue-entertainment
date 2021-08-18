@@ -1,9 +1,9 @@
 import { v3 } from 'node-hue-api';
 import { Api } from 'node-hue-api/dist/esm/api/Api';
 import { ChannelModeType, LIGHT_MODE_16BIT, LIGHT_MODE_8BIT, LIGHT_MODE_8BIT_DIMMABLE } from './const';
-import { ArtDmx } from './artnet/protocol';
 import { ColorUpdate, HueDtlsController } from './hue-dtls';
-import { ArtNetController } from './artnet/controller';
+import { ArtNetController } from 'artnet-protocol/dist';
+import { ArtDmx } from 'artnet-protocol/dist/protocol';
 
 export interface LightConfiguration {
     dmxStart: number;
@@ -129,7 +129,7 @@ export class ArtNetHueBridge {
             lights.push(new LIGHT_MODES[light.channelMode](light.dmxStart, parseInt(light.lightId, 10)));
         });
         if (roomLightIds.length !== 0) {
-            throw new Error(`Not all lights in the Entertainment room have been configured`);
+            throw new Error(`Not all lights in the Entertainment room have been configured: ${roomLightIds}`);
         }
         // TODO: Detect (and warn) overlapping DMX channels
 

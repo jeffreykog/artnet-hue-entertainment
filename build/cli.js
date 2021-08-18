@@ -89,6 +89,11 @@ class ArtNetHueEntertainmentCliHandler {
                         lightId: '10',
                         channelMode: '8bit-dimmable',
                     },
+                    {
+                        dmxStart: 5,
+                        lightId: '11',
+                        channelMode: '8bit-dimmable',
+                    },
                 ]
             });
             yield bridge.start();

@@ -30,6 +30,7 @@
     "light"
   ],
   "dependencies": {
+    "artnet-protocol": "^0.2.0",
     "conf": "^10.0.1",
     "ip6addr": "^0.2.3",
     "minimist": "^1.2.5",
