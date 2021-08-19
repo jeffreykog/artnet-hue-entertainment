@@ -82,18 +82,18 @@ class ArtNetHueEntertainmentCliHandler {
                 hueUsername: username,
                 hueClientKey: clientKey,
                 entertainmentRoomId: 6,
-                artNetBindIp: '127.0.0.1',
+                artNetBindIp: '172.24.142.110',
                 lights: [
                     {
                         dmxStart: 1,
                         lightId: '10',
                         channelMode: '8bit-dimmable',
                     },
-                    {
-                        dmxStart: 5,
-                        lightId: '11',
-                        channelMode: '8bit-dimmable',
-                    },
+                    // {
+                    //     dmxStart: 5,
+                    //     lightId: '11',
+                    //     channelMode: '8bit-dimmable',
+                    // },
                 ]
             });
             yield bridge.start();

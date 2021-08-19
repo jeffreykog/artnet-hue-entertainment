@@ -44,6 +44,16 @@ To start using ArtNet-Hue-Entertainment, take the following steps:
    Placement of the bulbs is not important and will be ignored.
 3. This project really is still work in progress. More to come!
 
+## Channel modes
+DMX channel mode can be configured for every Hue light that is controlled.
+The following 3 modes are supported:
+1. `8bit` - 3 channels (R, G, B)
+2. `8bit-dimmable` - 4 channels (Dim, R, G, B). This is the recommended mode,
+   as Hue bulbs are controlled with 16 bit values. Color mixing is smooth even
+   on the lowest dimmer setting.
+3. `16bit` - 6 channels (R, R fine, G, G fine, B, B fine). As Hue bulbs are
+   controlled with 16 bit values this gives full raw control over the bulbs.
+
 ## Protocol documentation
 * Hue Entertainment: https://developers.meethue.com/develop/hue-entertainment/philips-hue-entertainment-api/
 * ArtNet: https://artisticlicence.com/WebSiteMaster/User%20Guides/art-net.pdf
