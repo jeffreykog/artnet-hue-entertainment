@@ -53,6 +53,9 @@ class HueDtlsController extends events_1.EventEmitter {
     }
     close() {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!this.opened) {
+                return;
+            }
             this.opened = false;
             yield new Promise(resolve => { var _a; return (_a = this.socket) === null || _a === void 0 ? void 0 : _a.close(() => resolve(undefined)); });
             this.emit('close');
@@ -101,7 +104,9 @@ class HueDtlsController extends events_1.EventEmitter {
             offset += 9;
         });
         // console.log(message.toString('hex').match(/../g)!.join(' '));
-        (_a = this.socket) === null || _a === void 0 ? void 0 : _a.send(message);
+        if (this.opened) {
+            (_a = this.socket) === null || _a === void 0 ? void 0 : _a.send(message);
+        }
     }
 }
 exports.HueDtlsController = HueDtlsController;

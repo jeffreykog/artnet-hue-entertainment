@@ -161,13 +161,19 @@ export class ArtNetHueBridge {
         await this.dtlsController.connect();
         console.log('Connected and ready to go!');
 
-        process.on('SIGINT', () => {
+        const shutdownHandler = () => {
+            console.log('Received shutdown signal. Closing Hue connection...');
             this.close();
-        });
+            process.off('SIGINT', shutdownHandler);
+        };
+        process.on('SIGINT', shutdownHandler);
     }
 
     public async close() {
         await Promise.all([this.dtlsController!.close(), this.artNetController!.close()]);
+        if (this.hueApi) {
+            await this.hueApi.groups.disableStreaming(this.configuration.entertainmentRoomId);
+        }
     }
 
     private onDmxData(dmx: ArtDmx) {

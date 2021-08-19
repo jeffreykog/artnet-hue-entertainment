@@ -114,14 +114,20 @@ class ArtNetHueBridge {
             console.log('Performing streaming mode handshake...');
             yield this.dtlsController.connect();
             console.log('Connected and ready to go!');
-            process.on('SIGINT', () => {
+            const shutdownHandler = () => {
+                console.log('Received shutdown signal. Closing Hue connection...');
                 this.close();
-            });
+                process.off('SIGINT', shutdownHandler);
+            };
+            process.on('SIGINT', shutdownHandler);
         });
     }
     close() {
         return __awaiter(this, void 0, void 0, function* () {
             yield Promise.all([this.dtlsController.close(), this.artNetController.close()]);
+            if (this.hueApi) {
+                yield this.hueApi.groups.disableStreaming(this.configuration.entertainmentRoomId);
+            }
         });
     }
     onDmxData(dmx) {

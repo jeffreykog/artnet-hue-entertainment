@@ -61,6 +61,9 @@ export class HueDtlsController extends EventEmitter {
     }
 
     public async close() {
+        if (!this.opened) {
+            return;
+        }
         this.opened = false;
         await new Promise(resolve => this.socket?.close(() => resolve(undefined)));
         this.emit('close');
@@ -116,6 +119,8 @@ export class HueDtlsController extends EventEmitter {
 
         // console.log(message.toString('hex').match(/../g)!.join(' '));
 
-        this.socket?.send(message);
+        if (this.opened) {
+            this.socket?.send(message);
+        }
     }
 }
