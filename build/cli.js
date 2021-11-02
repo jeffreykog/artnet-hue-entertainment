@@ -17,7 +17,6 @@ const bridge_1 = require("./bridge");
 class ArtNetHueEntertainmentCliHandler {
     constructor(args) {
         this.config = new source_1.default();
-        console.log(this.config.path);
         this.args = args;
     }
     run() {
@@ -26,11 +25,17 @@ class ArtNetHueEntertainmentCliHandler {
                 this.printHelp();
                 return;
             }
-            if (this.args[0] === 'setup') {
-                this.runSetup(this.args.slice(1));
+            if (this.args[0] === 'discover') {
+                this.discoverBridges();
+            }
+            else if (this.args[0] === 'pair') {
+                this.runPair(this.args.slice(1));
             }
             else if (this.args[0] === 'run') {
                 this.startProcess();
+            }
+            else if (this.args[0] === 'config-path') {
+                console.log(this.config.path);
             }
             else {
                 this.printHelp();
@@ -39,10 +44,19 @@ class ArtNetHueEntertainmentCliHandler {
         });
     }
     printHelp() {
-        console.log('Help');
+        console.log('Usage: artnet-hue-entertainment <discover|pair|config-path|run> [options]');
+        console.log('');
+        console.log('Control Philips/Signify Hue lights using ArtNet.');
+        console.log('');
+        console.log('Subcommands:');
+        console.log('  discover             Discover all Hue bridges on your network. When you know the IP address of the bridge, run \'pair\' directly.');
+        console.log('  pair                 Pair with a Hue bridge. Press the link button on the bridge before running');
+        console.log('    --ip               The IP address of the Hue bridge. Both IPv4 and IPv6 are supported.');
+        console.log('  config-path          Print the path to the configuration file, for manual editing.');
+        console.log('  run                  Run the ArtNet to Hue bridge.');
         process.exit(1);
     }
-    runSetup(argv) {
+    runPair(argv) {
         return __awaiter(this, void 0, void 0, function* () {
             const args = minimist(argv, {
                 string: ['ip'],
@@ -64,11 +78,30 @@ class ArtNetHueEntertainmentCliHandler {
             }
             catch (e) {
                 if (e._hueError) {
-                    console.error(e._hueError.payload.message);
+                    console.error('Error while pairing:', e._hueError.payload.message);
                     process.exit(1);
                 }
                 throw e;
             }
+        });
+    }
+    discoverBridges() {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('Discovering bridges...');
+            node_hue_api_1.discovery.nupnpSearch().then(results => {
+                if (results.length === 0) {
+                    console.log('No bridges found.');
+                    return;
+                }
+                console.log('Found bridges:');
+                results.forEach(bridge => {
+                    var _a;
+                    console.log(` - ${bridge.ipaddress}: ${(_a = bridge.config) === null || _a === void 0 ? void 0 : _a.name}`);
+                });
+                console.log('');
+                console.log('To use any of these bridges, press the link button on the bridge and run:');
+                console.log('$ artnet-hue-entertainment pair --ip <ip address>');
+            });
         });
     }
     startProcess() {

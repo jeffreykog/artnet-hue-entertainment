@@ -102,6 +102,8 @@ class ArtNetHueBridge {
             this.dtlsController.on('close', () => { });
             this.dtlsController.on('connected', this.onDtlsConnected.bind(this));
             this.artNetController = new dist_1.ArtNetController();
+            this.artNetController.nameLong = 'ArtNet Hue';
+            this.artNetController.nameShort = 'ArtNet Hue';
             this.artNetController.bind(this.configuration.artNetBindIp);
             this.artNetController.on('dmx', this.onDmxData.bind(this));
             console.log('Requesting streaming mode...');
