@@ -61,3 +61,10 @@ The following 3 modes are supported:
 ## Protocol documentation
 * Hue Entertainment: https://developers.meethue.com/develop/hue-entertainment/philips-hue-entertainment-api/
 * ArtNet: https://artisticlicence.com/WebSiteMaster/User%20Guides/art-net.pdf
+
+## Disclaimer
+By using ArtNet-Hue-Entertainment you are in full control of the light that your bulbs output.
+Some light combinations and/or frequencies, etc. could cause epileptic seizures, migraines etc.
+to an end user, even if that person has no history of prior seizures or epilepsy etc.
+By taking full control over the lights you are responsible for preventing such adverse
+health effects. The maintainers of this repository are not responsible for any adverse health effects etc.
