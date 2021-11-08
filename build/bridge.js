@@ -117,9 +117,9 @@ class ArtNetHueBridge {
             yield this.dtlsController.connect();
             console.log('Connected and ready to go!');
             const shutdownHandler = () => {
-                console.log('Received shutdown signal. Closing Hue connection...');
-                this.close();
                 process.off('SIGINT', shutdownHandler);
+                console.log('Received shutdown signal. Closing Hue connection...');
+                this.close().then(() => process.exit(0));
             };
             process.on('SIGINT', shutdownHandler);
         });
