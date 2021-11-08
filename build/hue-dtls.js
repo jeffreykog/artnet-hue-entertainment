@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.HueDtlsController = void 0;
 const node_dtls_client_1 = require("node-dtls-client");
 const events_1 = require("events");
+const ip6addr_1 = require("ip6addr");
 const PACKET_HEADER = Buffer.from([0x48, 0x75, 0x65, 0x53, 0x74, 0x72, 0x65, 0x61, 0x6d]);
 class HueDtlsController extends events_1.EventEmitter {
     constructor(host, username, clientKey) {
@@ -29,8 +30,9 @@ class HueDtlsController extends events_1.EventEmitter {
     }
     connect() {
         return __awaiter(this, void 0, void 0, function* () {
+            const addrInfo = ip6addr_1.parse(this.host);
             const dtlsConfig = {
-                type: 'udp4',
+                type: addrInfo.kind() === 'ipv4' ? 'udp4' : 'udp6',
                 port: this.port,
                 address: this.host,
                 psk: { [this.username]: Buffer.from(this.clientKey, 'hex') },

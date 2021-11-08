@@ -21,11 +21,11 @@ class ArtNetHueEntertainmentCliHandler {
         }
 
         if (this.args[0] === 'discover') {
-            this.discoverBridges();
+            await this.discoverBridges();
         } else if (this.args[0] === 'pair') {
-            this.runPair(this.args.slice(1));
+            await this.runPair(this.args.slice(1));
         } else if (this.args[0] === 'run') {
-            this.startProcess();
+            await this.startProcess();
         } else if (this.args[0] === 'config-path') {
             console.log(this.config.path);
         } else {

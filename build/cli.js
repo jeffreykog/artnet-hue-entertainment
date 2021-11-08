@@ -26,13 +26,13 @@ class ArtNetHueEntertainmentCliHandler {
                 return;
             }
             if (this.args[0] === 'discover') {
-                this.discoverBridges();
+                yield this.discoverBridges();
             }
             else if (this.args[0] === 'pair') {
-                this.runPair(this.args.slice(1));
+                yield this.runPair(this.args.slice(1));
             }
             else if (this.args[0] === 'run') {
-                this.startProcess();
+                yield this.startProcess();
             }
             else if (this.args[0] === 'config-path') {
                 console.log(this.config.path);
