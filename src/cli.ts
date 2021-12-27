@@ -59,8 +59,6 @@ class ArtNetHueEntertainmentCliHandler {
             return;
         }
 
-        // TODO: Validate IP
-
         try {
             const host: string = args.ip;
             const api = await v3.api.createLocal(host).connect();

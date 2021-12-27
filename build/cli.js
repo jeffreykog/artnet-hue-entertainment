@@ -66,7 +66,6 @@ class ArtNetHueEntertainmentCliHandler {
                 process.exit(1);
                 return;
             }
-            // TODO: Validate IP
             try {
                 const host = args.ip;
                 const api = yield node_hue_api_1.v3.api.createLocal(host).connect();
