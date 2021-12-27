@@ -111,7 +111,7 @@ class ArtNetHueEntertainmentCliHandler {
             hueUsername: username,
             hueClientKey: clientKey,
             entertainmentRoomId: 6,
-            artNetBindIp: '172.24.142.110',
+            artNetBindIp: '172.24.136.18',
             lights: [
                 {
                     dmxStart: 1,

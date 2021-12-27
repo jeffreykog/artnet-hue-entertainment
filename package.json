@@ -35,7 +35,7 @@
     "ip6addr": "^0.2.3",
     "minimist": "^1.2.5",
     "node-dtls-client": "^1.0.1",
-    "node-hue-api": "5.0.0-beta.4"
+    "node-hue-api": "5.0.0-beta.9"
   },
   "devDependencies": {
     "@types/conf": "^3.0.0",
