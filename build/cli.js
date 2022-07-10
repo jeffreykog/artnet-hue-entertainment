@@ -114,15 +114,30 @@ class ArtNetHueEntertainmentCliHandler {
                 return;
             }
             const bridge = new bridge_1.ArtNetHueBridge({
-                hueHost: '172.24.139.10',
+                hueHost: host,
                 hueUsername: username,
                 hueClientKey: clientKey,
-                entertainmentRoomId: 6,
-                artNetBindIp: '172.24.136.18',
+                entertainmentRoomId: 200,
+                artNetBindIp: '172.24.184.16',
                 lights: [
                     {
                         dmxStart: 1,
-                        lightId: '10',
+                        lightId: '31',
+                        channelMode: '8bit-dimmable',
+                    },
+                    {
+                        dmxStart: 5,
+                        lightId: '32',
+                        channelMode: '8bit-dimmable',
+                    },
+                    {
+                        dmxStart: 9,
+                        lightId: '33',
+                        channelMode: '8bit-dimmable',
+                    },
+                    {
+                        dmxStart: 13,
+                        lightId: '34',
                         channelMode: '8bit-dimmable',
                     },
                     // {
