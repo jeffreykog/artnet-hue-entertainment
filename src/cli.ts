@@ -4,8 +4,6 @@ import { v3, discovery } from 'node-hue-api';
 import { ArtNetHueBridge } from './bridge';
 import * as nconf from 'nconf';
 import { stat, open } from 'fs/promises';
-import {Entertainment} from "@peter-murray/hue-bridge-model/dist/esm/model/groups/Entertainment";
-import {groupsApi} from "node-hue-api/src/api/http/endpoints/groups";
 
 const CONFIG_FILE_PATH = 'config.json';
 
@@ -23,9 +21,6 @@ class ArtNetHueEntertainmentCliHandler {
         await this.checkOrCreateConfigFile();
         // TODO: Handle config parsing errors
         this.config = this.config.file(CONFIG_FILE_PATH);
-
-        this.config.set('test1:test2', 'abcd');
-        this.config.save(null);
 
         if (this.args.length === 0) {
             this.printHelp();

@@ -15,7 +15,6 @@ const node_hue_api_1 = require("node-hue-api");
 const bridge_1 = require("./bridge");
 const nconf = require("nconf");
 const promises_1 = require("fs/promises");
-const Entertainment_1 = require("@peter-murray/hue-bridge-model/dist/esm/model/groups/Entertainment");
 const CONFIG_FILE_PATH = 'config.json';
 class ArtNetHueEntertainmentCliHandler {
     constructor(args) {
@@ -27,8 +26,6 @@ class ArtNetHueEntertainmentCliHandler {
             yield this.checkOrCreateConfigFile();
             // TODO: Handle config parsing errors
             this.config = this.config.file(CONFIG_FILE_PATH);
-            this.config.set('test1:test2', 'abcd');
-            this.config.save(null);
             if (this.args.length === 0) {
                 this.printHelp();
                 return;
@@ -163,8 +160,6 @@ class ArtNetHueEntertainmentCliHandler {
         return __awaiter(this, void 0, void 0, function* () {
             const hueApi = yield node_hue_api_1.v3.api.createLocal(this.config.get("hue:host"))
                 .connect(this.config.get("hue:username"));
-            const group = new Entertainment_1.Entertainment();
-            hueApi.groups.createGroup(group);
             const rooms = yield hueApi.groups.getEntertainment();
             rooms.forEach(room => {
                 console.log(room);
