@@ -15,6 +15,7 @@ const node_hue_api_1 = require("node-hue-api");
 const bridge_1 = require("./bridge");
 const nconf = require("nconf");
 const promises_1 = require("fs/promises");
+const clip_1 = require("./hue/clip");
 const CONFIG_FILE_PATH = 'config.json';
 class ArtNetHueEntertainmentCliHandler {
     constructor(args) {
@@ -41,6 +42,9 @@ class ArtNetHueEntertainmentCliHandler {
             }
             else if (this.args[0] === 'list-rooms') {
                 yield this.listEntertainmentRooms();
+            }
+            else if (this.args[0] === 'create-room') {
+                yield this.createEntertainmentRoom();
             }
             else {
                 this.printHelp();
@@ -158,13 +162,32 @@ class ArtNetHueEntertainmentCliHandler {
     }
     listEntertainmentRooms() {
         return __awaiter(this, void 0, void 0, function* () {
-            const hueApi = yield node_hue_api_1.v3.api.createLocal(this.config.get("hue:host"))
-                .connect(this.config.get("hue:username"));
-            const rooms = yield hueApi.groups.getEntertainment();
-            rooms.forEach(room => {
-                console.log(room);
+            const api = this.getClipApi();
+            const rooms = (yield api.getEntertainmentConfigurations()).map(room => {
+                return {
+                    id: room.id,
+                    name: room.metadata.name,
+                    status: room.status,
+                };
             });
+            console.table(rooms);
         });
+    }
+    createEntertainmentRoom() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const api = this.getClipApi();
+            try {
+                yield api.createEntertainmentConfiguration();
+            }
+            catch (e) {
+                // console.error(e);
+                console.log(e.response.status);
+                console.log(e.response.data);
+            }
+        });
+    }
+    getClipApi() {
+        return new clip_1.ClipApi(this.config.get("hue:host"), this.config.get("hue:username"));
     }
     checkOrCreateConfigFile() {
         return __awaiter(this, void 0, void 0, function* () {
