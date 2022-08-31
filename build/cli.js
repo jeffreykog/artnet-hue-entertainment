@@ -10,17 +10,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const source_1 = require("conf/dist/source");
 const minimist = require("minimist");
 const node_hue_api_1 = require("node-hue-api");
 const bridge_1 = require("./bridge");
+const nconf = require("nconf");
+const promises_1 = require("fs/promises");
+const Entertainment_1 = require("@peter-murray/hue-bridge-model/dist/esm/model/groups/Entertainment");
+const CONFIG_FILE_PATH = 'config.json';
 class ArtNetHueEntertainmentCliHandler {
     constructor(args) {
-        this.config = new source_1.default();
+        this.config = nconf.argv().env();
         this.args = args;
     }
     run() {
         return __awaiter(this, void 0, void 0, function* () {
+            yield this.checkOrCreateConfigFile();
+            // TODO: Handle config parsing errors
+            this.config = this.config.file(CONFIG_FILE_PATH);
+            this.config.set('test1:test2', 'abcd');
+            this.config.save(null);
             if (this.args.length === 0) {
                 this.printHelp();
                 return;
@@ -34,8 +42,8 @@ class ArtNetHueEntertainmentCliHandler {
             else if (this.args[0] === 'run') {
                 yield this.startProcess();
             }
-            else if (this.args[0] === 'config-path') {
-                console.log(this.config.path);
+            else if (this.args[0] === 'list-rooms') {
+                yield this.listEntertainmentRooms();
             }
             else {
                 this.printHelp();
@@ -52,7 +60,7 @@ class ArtNetHueEntertainmentCliHandler {
         console.log('  discover             Discover all Hue bridges on your network. When you know the IP address of the bridge, run \'pair\' directly.');
         console.log('  pair                 Pair with a Hue bridge. Press the link button on the bridge before running');
         console.log('    --ip               The IP address of the Hue bridge. Both IPv4 and IPv6 are supported.');
-        console.log('  config-path          Print the path to the configuration file, for manual editing.');
+        console.log('  list-rooms           List all available entertainment rooms');
         console.log('  run                  Run the ArtNet to Hue bridge.');
         process.exit(1);
     }
@@ -70,9 +78,10 @@ class ArtNetHueEntertainmentCliHandler {
                 const host = args.ip;
                 const api = yield node_hue_api_1.v3.api.createLocal(host).connect();
                 const user = yield api.users.createUser('artnet-hue-entertainment', 'cli');
-                this.config.set('hue.host', host);
-                this.config.set('hue.username', user.username);
-                this.config.set('hue.clientKey', user.clientkey);
+                this.config.set('hue:host', host);
+                this.config.set('hue:username', user.username);
+                this.config.set('hue:clientKey', user.clientkey);
+                this.config.save(null);
                 console.log('Hue setup was successful! Credentials are saved. You can run the server now.');
             }
             catch (e) {
@@ -106,9 +115,9 @@ class ArtNetHueEntertainmentCliHandler {
     startProcess() {
         return __awaiter(this, void 0, void 0, function* () {
             // TODO: Detect when setup has not yet been run
-            const host = this.config.get('hue.host');
-            const username = this.config.get('hue.username');
-            const clientKey = this.config.get('hue.clientKey');
+            const host = this.config.get('hue:host');
+            const username = this.config.get('hue:username');
+            const clientKey = this.config.get('hue:clientKey');
             if (host === undefined || username === undefined || clientKey === undefined) {
                 console.log('No Hue bridge is paired yet. Please pair a bridge first');
                 return;
@@ -148,6 +157,35 @@ class ArtNetHueEntertainmentCliHandler {
                 ]
             });
             yield bridge.start();
+        });
+    }
+    listEntertainmentRooms() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const hueApi = yield node_hue_api_1.v3.api.createLocal(this.config.get("hue:host"))
+                .connect(this.config.get("hue:username"));
+            const group = new Entertainment_1.Entertainment();
+            hueApi.groups.createGroup(group);
+            const rooms = yield hueApi.groups.getEntertainment();
+            rooms.forEach(room => {
+                console.log(room);
+            });
+        });
+    }
+    checkOrCreateConfigFile() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let exists;
+            try {
+                const fileInfo = yield promises_1.stat(CONFIG_FILE_PATH);
+                exists = fileInfo.isFile();
+            }
+            catch (e) {
+                exists = false;
+            }
+            if (!exists) {
+                const fd = yield promises_1.open(CONFIG_FILE_PATH, 'w');
+                yield fd.write('{}');
+                yield fd.close();
+            }
         });
     }
 }

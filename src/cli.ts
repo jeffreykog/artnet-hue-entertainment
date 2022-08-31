@@ -1,20 +1,32 @@
 #!/usr/bin/env node
-import Conf from 'conf/dist/source';
 import * as minimist from 'minimist';
 import { v3, discovery } from 'node-hue-api';
 import { ArtNetHueBridge } from './bridge';
+import * as nconf from 'nconf';
+import { stat, open } from 'fs/promises';
+import {Entertainment} from "@peter-murray/hue-bridge-model/dist/esm/model/groups/Entertainment";
+import {groupsApi} from "node-hue-api/src/api/http/endpoints/groups";
+
+const CONFIG_FILE_PATH = 'config.json';
 
 class ArtNetHueEntertainmentCliHandler {
 
-    private readonly config: Conf;
+    private config: nconf.Provider;
     private readonly args: string[];
 
     constructor(args: string[]) {
-        this.config = new Conf();
+        this.config = nconf.argv().env();
         this.args = args;
     }
 
     async run() {
+        await this.checkOrCreateConfigFile();
+        // TODO: Handle config parsing errors
+        this.config = this.config.file(CONFIG_FILE_PATH);
+
+        this.config.set('test1:test2', 'abcd');
+        this.config.save(null);
+
         if (this.args.length === 0) {
             this.printHelp();
             return;
@@ -26,8 +38,8 @@ class ArtNetHueEntertainmentCliHandler {
             await this.runPair(this.args.slice(1));
         } else if (this.args[0] === 'run') {
             await this.startProcess();
-        } else if (this.args[0] === 'config-path') {
-            console.log(this.config.path);
+        } else if (this.args[0] === 'list-rooms') {
+            await this.listEntertainmentRooms();
         } else {
             this.printHelp();
             return;
@@ -43,7 +55,7 @@ class ArtNetHueEntertainmentCliHandler {
         console.log('  discover             Discover all Hue bridges on your network. When you know the IP address of the bridge, run \'pair\' directly.');
         console.log('  pair                 Pair with a Hue bridge. Press the link button on the bridge before running');
         console.log('    --ip               The IP address of the Hue bridge. Both IPv4 and IPv6 are supported.');
-        console.log('  config-path          Print the path to the configuration file, for manual editing.');
+        console.log('  list-rooms           List all available entertainment rooms');
         console.log('  run                  Run the ArtNet to Hue bridge.');
         process.exit(1);
     }
@@ -64,9 +76,10 @@ class ArtNetHueEntertainmentCliHandler {
             const api = await v3.api.createLocal(host).connect();
             const user = await api.users.createUser('artnet-hue-entertainment', 'cli');
 
-            this.config.set('hue.host', host);
-            this.config.set('hue.username', user.username);
-            this.config.set('hue.clientKey', user.clientkey);
+            this.config.set('hue:host', host);
+            this.config.set('hue:username', user.username);
+            this.config.set('hue:clientKey', user.clientkey);
+            this.config.save(null);
 
             console.log('Hue setup was successful! Credentials are saved. You can run the server now.')
 
@@ -98,9 +111,9 @@ class ArtNetHueEntertainmentCliHandler {
 
     async startProcess() {
         // TODO: Detect when setup has not yet been run
-        const host = this.config.get('hue.host') as string;
-        const username = this.config.get('hue.username') as string;
-        const clientKey = this.config.get('hue.clientKey') as string;
+        const host = this.config.get('hue:host') as string;
+        const username = this.config.get('hue:username') as string;
+        const clientKey = this.config.get('hue:clientKey') as string;
         if (host === undefined || username === undefined || clientKey === undefined) {
             console.log('No Hue bridge is paired yet. Please pair a bridge first');
             return;
@@ -141,6 +154,32 @@ class ArtNetHueEntertainmentCliHandler {
             ]
         });
         await bridge.start();
+    }
+
+    async listEntertainmentRooms() {
+        const hueApi = await v3.api.createLocal(this.config.get("hue:host"))
+            .connect(this.config.get("hue:username"));
+
+        const rooms = await hueApi.groups.getEntertainment();
+        rooms.forEach(room => {
+            console.log(room);
+        });
+    }
+
+    private async checkOrCreateConfigFile() {
+        let exists: boolean;
+        try {
+            const fileInfo = await stat(CONFIG_FILE_PATH);
+            exists = fileInfo.isFile();
+        } catch (e) {
+            exists = false;
+        }
+
+        if (!exists) {
+            const fd = await open(CONFIG_FILE_PATH, 'w');
+            await fd.write('{}');
+            await fd.close();
+        }
     }
 }
 
