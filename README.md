@@ -58,6 +58,9 @@ The following 3 modes are supported:
 3. `16bit` - 6 channels (R, R fine, G, G fine, B, B fine). As Hue bulbs are
    controlled with 16 bit values this gives full raw control over the bulbs.
 
+## Use configuration file
+from-config          Use configuration setting "run-mode" from configuration file as parameter. For 'pair', configuration entry 'hue.host' is used for '--ip'
+
 ## Protocol documentation
 * Hue Entertainment: https://developers.meethue.com/develop/hue-entertainment/philips-hue-entertainment-api/
 * ArtNet: https://artisticlicence.com/WebSiteMaster/User%20Guides/art-net.pdf
