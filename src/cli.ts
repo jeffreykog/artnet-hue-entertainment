@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 import * as minimist from 'minimist';
-import { v3, discovery } from 'node-hue-api';
-import { ArtNetHueBridge } from './bridge';
+import {discovery, v3} from 'node-hue-api';
+import {ArtNetHueBridge} from './bridge';
 import * as nconf from 'nconf';
-import { stat, open } from 'fs/promises';
+import {open, stat} from 'fs/promises';
+import {ClipApi} from "./hue/clip";
 
 const CONFIG_FILE_PATH = 'config.json';
 
@@ -35,6 +36,8 @@ class ArtNetHueEntertainmentCliHandler {
             await this.startProcess();
         } else if (this.args[0] === 'list-rooms') {
             await this.listEntertainmentRooms();
+        } else if (this.args[0] === 'create-room') {
+            await this.createEntertainmentRoom();
         } else {
             this.printHelp();
             return;
@@ -78,7 +81,7 @@ class ArtNetHueEntertainmentCliHandler {
 
             console.log('Hue setup was successful! Credentials are saved. You can run the server now.')
 
-        } catch (e) {
+        } catch (e: any) {
             if (e._hueError) {
                 console.error('Error while pairing:', e._hueError.payload.message);
                 process.exit(1);
@@ -152,13 +155,31 @@ class ArtNetHueEntertainmentCliHandler {
     }
 
     async listEntertainmentRooms() {
-        const hueApi = await v3.api.createLocal(this.config.get("hue:host"))
-            .connect(this.config.get("hue:username"));
+        const api = this.getClipApi();
 
-        const rooms = await hueApi.groups.getEntertainment();
-        rooms.forEach(room => {
-            console.log(room);
+        const rooms = (await api.getEntertainmentConfigurations()).map(room => {
+            return {
+                id: room.id,
+                name: room.metadata.name,
+                status: room.status,
+            };
         });
+        console.table(rooms);
+    }
+
+    async createEntertainmentRoom() {
+        const api = this.getClipApi();
+        try {
+            await api.createEntertainmentConfiguration();
+        } catch (e: any) {
+            // console.error(e);
+            console.log(e.response.status);
+            console.log(e.response.data);
+        }
+    }
+
+    private getClipApi() {
+        return new ClipApi(this.config.get("hue:host"), this.config.get("hue:username"));
     }
 
     private async checkOrCreateConfigFile() {
