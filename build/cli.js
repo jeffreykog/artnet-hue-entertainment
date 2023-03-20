@@ -193,14 +193,14 @@ class ArtNetHueEntertainmentCliHandler {
         return __awaiter(this, void 0, void 0, function* () {
             let exists;
             try {
-                const fileInfo = yield promises_1.stat(CONFIG_FILE_PATH);
+                const fileInfo = yield (0, promises_1.stat)(CONFIG_FILE_PATH);
                 exists = fileInfo.isFile();
             }
             catch (e) {
                 exists = false;
             }
             if (!exists) {
-                const fd = yield promises_1.open(CONFIG_FILE_PATH, 'w');
+                const fd = yield (0, promises_1.open)(CONFIG_FILE_PATH, 'w');
                 yield fd.write('{}');
                 yield fd.close();
             }

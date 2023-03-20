@@ -30,7 +30,7 @@ class HueDtlsController extends events_1.EventEmitter {
     }
     connect() {
         return __awaiter(this, void 0, void 0, function* () {
-            const addrInfo = ip6addr_1.parse(this.host);
+            const addrInfo = (0, ip6addr_1.parse)(this.host);
             const dtlsConfig = {
                 type: addrInfo.kind() === 'ipv4' ? 'udp4' : 'udp6',
                 port: this.port,

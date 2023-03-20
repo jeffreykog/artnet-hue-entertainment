@@ -81,7 +81,7 @@ class ArtNetHueEntertainmentCliHandler {
 
             console.log('Hue setup was successful! Credentials are saved. You can run the server now.')
 
-        } catch (e) {
+        } catch (e: any) {
             if (e._hueError) {
                 console.error('Error while pairing:', e._hueError.payload.message);
                 process.exit(1);
@@ -171,7 +171,7 @@ class ArtNetHueEntertainmentCliHandler {
         const api = this.getClipApi();
         try {
             await api.createEntertainmentConfiguration();
-        } catch (e) {
+        } catch (e: any) {
             // console.error(e);
             console.log(e.response.status);
             console.log(e.response.data);
